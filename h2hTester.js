@@ -1,4 +1,3 @@
-const fs = require('fs')
 const dotenv = require('dotenv')
 const Client = require('ssh2-sftp-client');
 
@@ -8,20 +7,23 @@ dotenv.config()
 
 const sftp = new Client();
 
-const passphrase = process.env.PASSPHRASE
-const homePath = process.env.HOME_PATH
+// const passphrase = process.env.PASSPHRASE
 
-fileToGet = Math.floor(Math.random() * 2 + 1)
+const agent = process.env.SSH_AUTH_SOCK
+
+const fileToGet = Math.floor(Math.random() * 2 + 1)
 
 sftp.connect({
   host: '127.0.0.1',
   port: '2022',
   username: 'yonatan7',
-  privateKey: fs.readFileSync('/home/../Users/yonatanboehm/.ssh/id_ed25519'),
-  passphrase
+  // privateKey: fs.readFileSync('/home/../Users/yonatanboehm/.ssh/id_ed25519'),
+  // passphrase,
+  agent,
+  agentForward: true
   
 }).then(() => {
-  return sftp.get(`/Documents/file${fileToGet}.txt`, '/home/../Users/yonatanboehm/newfile.txt')
+  return sftp.fastGet(`/Documents/file${fileToGet}.txt`, '/home/../Users/yonatanboehm/newfile.txt')
 }).then(() => {
   sftp.end();
 })

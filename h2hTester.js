@@ -1,5 +1,6 @@
 const dotenv = require('dotenv')
 const Client = require('ssh2-sftp-client');
+const fs = require('node:fs/promises')
 
 // open sftpGo server
 

@@ -1,27 +1,26 @@
-const fs = require('fs')
-const dotenv = require('dotenv')
 const Client = require('ssh2-sftp-client');
-
-// open sftpGo server
-
-dotenv.config()
+const fs = require('fs')
 
 const sftp = new Client();
 
-const passphrase = process.env.PASSPHRASE
-const homePath = process.env.HOME_PATH
+const sftpTestConnection = (configObject) => {
+  let connection
+  sftp.connect(configObject)
+  .then(() => {
+    return sftp.exists('/')
+  })
+  .then(data => {
+    console.log(data)
+    console.log('Successful connection')
+    connection = true
+  }).then(() => {
+    sftp.end();
+  }).catch(err => {
+    console.error(err.message)
+    connection = false
+    sftp.end();
+  })
+  return connection
+}
 
-fileToGet = Math.floor(Math.random() * 2 + 1)
-
-sftp.connect({
-  host: '127.0.0.1',
-  port: '2022',
-  username: 'yonatan7',
-  privateKey: fs.readFileSync('/home/../Users/yonatanboehm/.ssh/id_ed25519'),
-  passphrase
-  
-}).then(() => {
-  return sftp.get(`/Documents/file${fileToGet}.txt`, '/home/../Users/yonatanboehm/newfile.txt')
-}).then(() => {
-  sftp.end();
-})
+module.exports = { sftpTestConnection }

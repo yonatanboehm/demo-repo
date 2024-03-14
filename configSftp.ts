@@ -1,9 +1,10 @@
-const { program, Option } = require('commander');
-const fs = require('fs')
+import { program, Option } from 'commander';
+import { parseString } from './utils';
+import fs from 'fs';
 
 const sftpProgram = program
   .addOption(new Option('-h, --host <host address>, address of host SFTP server').makeOptionMandatory())
-  .addOption(new Option('-P, --port <port>', 'port of sftp server', '22'))
+  .addOption(new Option('-P, --port <port>', 'port of sftp server').default('22'))
   .addOption(new Option('-u, --username <username>', 'username of local user').makeOptionMandatory())
   .addOption(new Option('-p, --password <password>', 'password').conflicts('key'))
   .addOption(new Option('-i, --privateKey <privateKey>', 'path/to/private/key').conflicts('password'))
@@ -13,8 +14,10 @@ const sftpProgram = program
       throw new Error('Must include key or password')
     }
     if (options.privateKey) {
-      options.privateKey = fs.readFileSync(options.privateKey) // converts path to private key
+      const privateKey: string = parseString(options.privateKey)
+      options.privateKey = fs.readFileSync(privateKey) // converts path to private key
     }
+    options.port = Number(options.port)
   })
 
-module.exports = { sftpProgram }
+export default sftpProgram

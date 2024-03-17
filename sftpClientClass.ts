@@ -6,10 +6,9 @@ import sftp from 'ssh2-sftp-client';
 
 class SftpClient {
 
-  config: Config
-  client: sftp
+  private client: sftp
 
-  constructor(config: Config) {
+  constructor(private config: Config) {
     this.config = config;
     this.client = new Client();
   }
